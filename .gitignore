@@ -1,0 +1,52 @@
+# зависимости
+node_modules/
+.pnp
+.pnp.js
+
+# сборка
+/out
+/.next
+/public/manifest.webmanifest
+/release
+/dist-new
+*.tsbuildinfo
+next-env.d.ts.bak
+
+# временный staging для деплоя Pages
+/.pages-staging
+
+# Android (генерируется cap add android)
+/android/.gradle
+/android/build
+/android/app/build
+/android/local.properties
+/android/.idea
+/android/captures
+/android/app/release
+/android/app/debug
+*.apk
+*.aab
+*.keystore
+!debug.keystore
+
+# Локальный JDK 17-24, который build-apk подхватывает автоматически
+.jdk/
+
+# Electron
+/dist
+
+# секреты — ОБЯЗАТЕЛЬНО в .gitignore
+.env
+.env.local
+.env*.local
+
+# разное
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.vscode/
+.idea/
+
+# служебное
+/scripts/.vertical-seed.json

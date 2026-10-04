@@ -1,0 +1,111 @@
+{
+  "name": "yutub",
+  "version": "1.0.0",
+  "private": true,
+  "main": "electron/main.js",
+  "description": "VibeTube — бесплатный аггатор вертикальных видео. Один код -> Web (Vercel) / APK (Capacitor) / EXE (Electron).",
+  "author": "VibeTube",
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "node scripts/gen-manifest.mjs",
+    "build": "next build",
+    "start": "npx serve out",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "seed": "node scripts/seed.mjs",
+    "media:check": "node scripts/check-media.mjs",
+    "icons": "node scripts/gen-icons.mjs",
+    "icons:verify": "node scripts/verify-icons.mjs",
+    "test:server": "node scripts/test-server.mjs",
+    "test": "npm run typecheck && npm run lint && npm run icons:verify && npm run test:server",
+    "sync": "npm run build && cap sync",
+    "android:add": "cap add android",
+    "apk:sync": "npm run build && cap sync android && cap copy android",
+    "build:apk": "node scripts/build-apk.mjs release",
+    "build:apk:debug": "node scripts/build-apk.mjs debug",
+    "apk:open": "cap open android",
+    "electron:dev": "cross-env NODE_ENV=development electron .",
+    "build:exe": "npm run build && electron-builder --win --x64",
+    "build:exe:portable": "npm run build && electron-builder --win portable --x64",
+    "verify:export": "node scripts/verify-export.mjs",
+    "deploy:pages": "node scripts/deploy-pages.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/app": "^8.0.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/haptics": "^8.0.1",
+    "@capacitor/keyboard": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.1",
+    "@supabase/supabase-js": "^2.117.2",
+    "next": "^16.3.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "cross-env": "^10.1.0",
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3",
+    "eslint": "~9.39.5",
+    "eslint-config-next": "^16.3.8",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  },
+  "build": {
+    "appId": "com.vibetube.app",
+    "productName": "Ютуб",
+    "copyright": "Copyright © 2026 VibeTube",
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "out/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "Ютуб-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Ютуб"
+    },
+    "portable": {
+      "artifactName": "Ютуб-${version}-portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "assets/icon.png",
+      "category": "Network"
+    }
+  }
+}

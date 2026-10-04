@@ -1,0 +1,257 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   VibeTube — дизайн-система. Тёмная тема по умолчанию.
+   Сначала обычный CSS с переменными (работает всегда), Tailwind — утилиты.
+   ========================================================================== */
+
+@theme {
+  --color-ink-950: #05060a;
+  --color-ink-900: #0a0c14;
+  --color-ink-800: #121524;
+  --color-ink-700: #1b2036;
+
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+
+  --color-punch-400: #f472b6;
+  --color-punch-500: #ec4899;
+
+  --color-aqua-400: #22d3ee;
+  --color-aqua-500: #06b6d4;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Градиент бренда — используется и в логотипе, и в кнопках, и в свечениях. */
+  --vt-grad: linear-gradient(135deg, #7c3aed 0%, #d946ef 48%, #06b6d4 100%);
+  --vt-grad-soft: linear-gradient(135deg, rgba(124, 58, 237, 0.28), rgba(6, 182, 212, 0.22));
+  --vt-glass: rgba(255, 255, 255, 0.07);
+  --vt-glass-strong: rgba(255, 255, 255, 0.12);
+  --vt-stroke: rgba(255, 255, 255, 0.14);
+  --vt-text: #f4f5fb;
+  --vt-muted: rgba(244, 245, 251, 0.62);
+  --vt-safe-top: env(safe-area-inset-top, 0px);
+  --vt-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-ink-950);
+  color: var(--vt-text);
+  font-family: var(--font-sans);
+  /* Лента вертикальная: горизонтальный свайп не должен триггерить навигацию браузера. */
+  overscroll-behavior: none;
+}
+
+body {
+  /* Не даём iOS/Android «оттягивать» страницу — только внутренний скролл контейнера. */
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+::selection {
+  background: rgba(217, 70, 239, 0.4);
+}
+
+/* Скрываем нативный скроллбар: визуально лента не должна выглядеть как скролл-док. */
+.vt-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.vt-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Стеклянные поверхности
+   -------------------------------------------------------------------------- */
+.vt-glass {
+  background: var(--vt-glass);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid var(--vt-stroke);
+}
+
+.vt-glass-strong {
+  background: rgba(14, 16, 26, 0.72);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vt-gradient-text {
+  background: var(--vt-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Кнопка-акцент с градиентом и мягким свечением. */
+.vt-cta {
+  background: var(--vt-grad);
+  color: #fff;
+  box-shadow:
+    0 8px 30px -8px rgba(217, 70, 239, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition:
+    transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 160ms ease,
+    box-shadow 160ms ease;
+}
+.vt-cta:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.vt-cta:active:not(:disabled) {
+  transform: translateY(0) scale(0.985);
+}
+.vt-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Анимации
+   -------------------------------------------------------------------------- */
+@keyframes vt-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.32);
+  }
+  70% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.vt-like-pop {
+  animation: vt-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes vt-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.4);
+    opacity: 0;
+  }
+}
+.vt-burst {
+  animation: vt-burst 900ms ease-out forwards;
+}
+
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.vt-rise {
+  animation: vt-rise 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes vt-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.vt-sheet {
+  animation: vt-sheet-up 300ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.vt-fade {
+  animation: vt-fade 200ms ease both;
+}
+
+@keyframes vt-shimmer {
+  0% {
+    background-position: -420px 0;
+  }
+  100% {
+    background-position: 420px 0;
+  }
+}
+.vt-skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.11) 37%, rgba(255, 255,255, 0.04) 63%);
+  background-size: 840px 100%;
+  animation: vt-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes vt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.vt-spin {
+  animation: vt-spin 800ms linear infinite;
+}
+
+/* --------------------------------------------------------------------------
+   Утилиты
+   -------------------------------------------------------------------------- */
+.vt-shadow-lift {
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.85);
+}
+
+/* Размытая подложка под вертикальным видео: скрывает чёрные поля 16:9. */
+.vt-backdrop {
+  filter: blur(46px) saturate(190%) brightness(0.55);
+  transform: scale(1.35);
+}
+
+.vt-focus:focus-visible {
+  outline: 2px solid rgba(167, 139, 250, 0.9);
+  outline-offset: 2px;
+}
+
+/* Нативное полноэкранное видео внутри вертикальной карточки. */
+.vt-card-video {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
