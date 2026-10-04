@@ -157,37 +157,49 @@ try {
 
 log('\n[4/4] Включение GitHub Pages...');
 const slug = remote.replace(/\.git$/, '').replace(/^https?:\/\//, '').replace(/^git@/, '');
-const enable = spawnSync(
-  'gh',
-  [
-    'api',
-    '--method',
-    'POST',
-    `repos/${slug}/pages`,
-    '-f',
-    'source[branch]=gh-pages',
-    '-f',
-    'source[path]=/',
-  ],
-  { encoding: 'utf8' },
-);
 
-if (enable.status !== 0) {
-  // Страница уже может быть включена — это не ошибка, а норма.
-  const already = /already exists/i.test(enable.stderr || '');
-  log(
-    already
-      ? '  Pages уже был включён ранее — это норма.'
-      : `  не удалось включить Pages автоматически:\n${(enable.stderr || '').trim()}\n  Включите вручную: Settings -> Pages -> Source: gh-pages / (root)`,
-  );
+// Сначала GET: если Pages уже включён, POST вернёт 409 и скрипт
+// напечатает пугающее «ошибка», хотя всё на самом деле в порядке.
+const existing = spawnSync('gh', ['api', `repos/${slug}/pages`], { encoding: 'utf8' });
+
+if (existing.status === 0) {
+  const cfg = JSON.parse(existing.stdout);
+  log(`  Pages уже включён: ${cfg.html_url} (ветка ${cfg.source?.branch}, build_type=${cfg.build_type})`);
+  if (cfg.source?.branch !== 'gh-pages' || cfg.source?.path !== '/') {
+    log(`  ВНИМАНИЕ: источник Pages — ${cfg.source?.branch}/${cfg.source?.path}, а не gh-pages / (root).`);
+    log('  Исправьте вручную: Settings -> Pages -> Source.');
+  }
 } else {
-  try {
-    log(`  Pages включён: ${JSON.parse(enable.stdout).html_url}`);
-  } catch {
-    log('  Pages включён.');
+  const created = spawnSync(
+    'gh',
+    [
+      'api',
+      '--method',
+      'POST',
+      `repos/${slug}/pages`,
+      '-f',
+      'source[branch]=gh-pages',
+      '-f',
+      'source[path]=/',
+    ],
+    { encoding: 'utf8' },
+  );
+
+  if (created.status === 0) {
+    try {
+      log(`  Pages включён: ${JSON.parse(created.stdout).html_url}`);
+    } catch {
+      log('  Pages включён.');
+    }
+  } else {
+    log(
+      `  не удалось включить Pages автоматически:\n${(created.stderr || '').trim()}\n` +
+        '  Включите вручную: Settings -> Pages -> Source: gh-pages / (root)',
+    );
   }
 }
 
 log(`\nГотово. Сайт: https://${slug.replace(/^([^/]+)\/([^/]+)$/, '$1.github.io/$2')}/`);
-log('Первый build занимает 1–2 минуты.');
+log('Сборка Pages занимает 1–2 минуты, потом ещё минута на распространение по CDN.');
+log('Проверить живой сайт: node scripts/verify-live.mjs https://' + slug.replace(/^([^/]+)\/([^/]+)$/, '$1.github.io/$2') + '/');
 process.exitCode = 0;

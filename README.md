@@ -4,9 +4,9 @@
 
 | Платформа | Технология | Артефакт |
 |---|---|---|
-| Веб | Next.js 16, статический экспорт | папка `out/` → Vercel |
-| Android | Capacitor 8 | `dist/Ютуб-1.0.0-release.apk` |
-| Windows | Electron 44 | `release/Ютуб-1.0.0-x64.exe` |
+| Веб | Next.js 16, статический экспорт | [dimacultasov6-star.github.io/yutub](https://dimacultasov6-star.github.io/yutub/) |
+| Android | Capacitor 8 | [`Ютуб-1.0.0-release.apk`](https://github.com/dimacultasov6-star/yutub/releases) |
+| Windows | Electron 44 | [`Ютуб-1.0.0-x64.exe`](https://github.com/dimacultasov6-star/yutub/releases) |
 
 Приложение **не хранит видеофайлы**. Оно хранит только метаданные (ссылка,
 автор, заголовок, лайки, комментарии), а видео подгружается напрямую с CDN.
@@ -25,6 +25,34 @@ npm run dev          # http://localhost:3000
 
 ---
 
+## Публикация сайта на GitHub Pages
+
+```bash
+npm run deploy:pages
+node scripts/verify-live.mjs https://dimacultasov6-star.github.io/yutub/
+```
+
+Скрипт сам соберёт статику, проверит её и зальёт в ветку `gh-pages`.
+
+Две детали, на которых обычно спотыкаются:
+
+**1. Префикс `/yutub/`.** Сайт лежит не в корне домена, а по адресу
+`github.io/yutub/`. Статический экспорт Next.js по умолчанию пишет
+абсолютные пути (`/_next/...`), и без префикса страница отдаёт белый экран.
+Поэтому при публикации сборка идёт с `NEXT_PUBLIC_BASE_PATH=/yutub`
+(см. `next.config.mjs`). Сборки для Electron и Android префикса не получают
+и остаются в корне.
+
+**2. Файл `.nojekyll`.** Pages по умолчанию прогоняет сайт через Jekyll, а
+Jekyll выбрасывает всё, что начинается с подчёркивания. Наш каталог ассетов —
+`/_next/`, то есть без `.nojekyll` главная открывается, а каждый ассет отдаёт
+404. Скрипт создаёт этот файл автоматически.
+
+Проверки, которые ловят обе проблемы: `scripts/verify-export.mjs` (по
+собранным файлам) и `scripts/verify-live.mjs` (по живому сайту).
+
+---
+
 ## Команды
 
 ### Общее
@@ -37,6 +65,8 @@ npm run dev          # http://localhost:3000
 | `npm test` | typecheck + lint + проверка иконок + тесты статического сервера |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
+| `npm run verify:export` | проверить, что `out/` собран под нужный basePath |
+| `npm run deploy:pages` | собрать и опубликовать сайт на GitHub Pages |
 
 ### Веб (Vercel)
 
@@ -220,8 +250,10 @@ npm run icons:verify   # проверка, что PNG/ICO валидны
 ## Проверка
 
 ```bash
-npm test          # typecheck, lint, иконки, тесты сервера
-node scripts/smoke-exe.mjs   # запуск собранного .exe и проверка отдачи HTML
+npm test                      # typecheck, lint, иконки, тесты сервера
+node scripts/verify-export.mjs /yutub    # что out/ собран под префикс Pages
+node scripts/verify-live.mjs https://dimacultasov6-star.github.io/yutub/
+node scripts/smoke-exe.mjs     # запуск собранного .exe и проверка отдачи HTML
 ```
 
 `scripts/test-server.mjs` проверяет то, что обычно ломается у пользователей:
