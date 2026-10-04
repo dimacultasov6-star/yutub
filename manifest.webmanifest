@@ -1,0 +1,24 @@
+{
+  "name": "Ютуб — вертикальная лента",
+  "short_name": "Ютуб",
+  "description": "Бесплатный агрегатор вертикальных видео: лента, лайки, комментарии. Один код — веб, Android и Windows.",
+  "lang": "ru",
+  "start_url": "/yutub/",
+  "scope": "/yutub/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
+  "categories": [
+    "entertainment",
+    "social"
+  ],
+  "icons": [
+    {
+      "src": "/yutub/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
