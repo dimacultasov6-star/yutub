@@ -5,8 +5,8 @@
 | Платформа | Технология | Артефакт |
 |---|---|---|
 | Веб | Next.js 16, статический экспорт | [dimacultasov6-star.github.io/yutub](https://dimacultasov6-star.github.io/yutub/) |
-| Android | Capacitor 8 | [`Ютуб-1.0.0-release.apk`](https://github.com/dimacultasov6-star/yutub/releases) |
-| Windows | Electron 44 | [`Ютуб-1.0.0-x64.exe`](https://github.com/dimacultasov6-star/yutub/releases) |
+| Android | Capacitor 8 | [`Yutub-1.0.0-release.apk`](https://github.com/dimacultasov6-star/yutub/releases) |
+| Windows | Electron 44 | [`Yutub-1.0.0-x64.exe`](https://github.com/dimacultasov6-star/yutub/releases) |
 
 Приложение **не хранит видеофайлы**. Оно хранит только метаданные (ссылка,
 автор, заголовок, лайки, комментарии), а видео подгружается напрямую с CDN.
@@ -176,6 +176,26 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ... npm run seed
 - Просмотры и лайки пользователя читаются RPC `my_likes` / `bump_view`.
 - RLS включён везде; анонимный ключ не может ничего, кроме чтения ленты,
   добавления своих лайков и комментариев.
+
+## Релизы
+
+```bash
+npm run build:exe
+npm run build:apk
+node scripts/publish-release.mjs --notes RELEASE_NOTES.md
+```
+
+Скрипт создаёт или обновляет релиз `v<version>` из `package.json` и загружает
+собранные файлы.
+
+Имена вложений в релизе — **латиницей** (`Yutub-...`), и это не опечатка.
+GitHub вырезает все не-ASCII символы из имени файла: `Ютуб-1.0.0-x64.exe`
+молча превратился бы в `-1.0.0-x64.exe`, и скачать его по ожидаемому имени
+невозможно. Проверено: `тест.txt` GitHub сохраняет как `default.txt`.
+
+Сборка Android требует JDK 17–24. JDK 25 (встроенный JBR свежих Android Studio)
+не подходит: Android Gradle Plugin 8.x падает с `Unsupported class file major
+version 69`.
 
 ---
 

@@ -28,7 +28,8 @@
     "build:exe": "npm run build && electron-builder --win --x64",
     "build:exe:portable": "npm run build && electron-builder --win portable --x64",
     "verify:export": "node scripts/verify-export.mjs",
-    "deploy:pages": "node scripts/deploy-pages.mjs"
+    "deploy:pages": "node scripts/deploy-pages.mjs",
+    "publish:release": "node scripts/publish-release.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",
